@@ -1,0 +1,33 @@
+{
+  "name": "coinciege-node",
+  "version": "2.0.0",
+  "description": "Coincierge node.js SDK",
+  "main": "lib/coincierge.js",
+  "author": "Valerio Leo <mail.valerioleo@gmail.com>",
+  "private": true,
+  "homepage": "https://coincierge.io",
+  "scripts": {
+    "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only"
+  },
+  "devDependencies": {
+    "chai": "~4.2.0",
+    "chai-as-promised": "~7.1.1",
+    "coveralls": "^3.0.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "mocha": "~6.1.4",
+    "nock": "^10.0.6",
+    "nyc": "^14.1.0",
+    "prettier": "^1.16.4"
+  },
+  "dependencies": {
+    "ava": "^2.4.0",
+    "lodash.isnumber": "^3.0.3",
+    "lodash.size": "^4.2.0",
+    "qs": "^6.9.0",
+    "sinon": "^7.5.0",
+    "uuid": "^3.3.3"
+  }
+}
