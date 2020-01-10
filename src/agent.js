@@ -1,9 +1,30 @@
 const WebSocket = require('ws');
+const {URLSearchParams} = require('url');
 const {Observable} = require('rxjs');
 const uuid4 = require('uuid/v4');
 const {removeNullProperties} = require('@coincierge/common/fn');
 const {fetch} = require('@coincierge/common/helpers/api');
 const {requestHandler} = require('./requestHandler');
+
+const getAccessToken = async ({clientId, clientSecret}) => {
+  const params = new URLSearchParams();
+  params.set('grant_type', 'client_credentials');
+  params.set('client_id', clientId);
+  params.set('client_secret', clientSecret);
+
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
+
+  const grant = await fetch(
+    'https://auth.coincierge.io/auth/realms/coincierge-local/protocol/openid-connect/token',
+    'POST',
+    headers,
+    params
+  );
+
+  return grant.access_token;
+};
 
 const createHttpAgentRoot = fetch => (key, settings) => {
   const port = settings.httpPort
@@ -48,6 +69,7 @@ const createWsAgentRoot = WebSocket => (key, settings) => {
 };
 
 module.exports = {
+  getAccessToken,
   createHttpAgentRoot,
   createHttpAgent: createHttpAgentRoot(fetch),
   createWsAgentRoot,
