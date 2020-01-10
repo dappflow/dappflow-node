@@ -6,9 +6,19 @@ const createAppHandler = (wsClient, coincierge, signer) => async params => {
       const {type, data} = JSON.parse(message);
 
       if(type === 'signable_tx') {
-        const signedTx = signer(data.inputData);
+        const {
+          nonce,
+          to,
+          value,
+          inputData,
+          gasLimit,
+          gasPrice,
+          id
+        } = data;
 
-        await coincierge.transactions.list();
+        const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
+
+        await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId: id, appId: params.appId});
       }
     });
   });
