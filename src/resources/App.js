@@ -13,12 +13,12 @@ const createAppHandler = (wsClient, coincierge, signer) => async params => {
           inputData,
           gasLimit,
           gasPrice,
-          id
+          id: txId
         } = data;
 
         const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
 
-        await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId: id, appId: params.appId});
+        await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId: params.appId});
       }
     });
   });
@@ -37,7 +37,7 @@ const appResource = (httpClient, wsAgent, coincierge, signer) => {
 
     list: httpClient({
       method: 'GET',
-      path: `${basePath}/`
+      path: basePath
     })
   };
 
