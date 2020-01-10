@@ -1,3 +1,4 @@
 module.exports = [
-  require('./App')
+  require('./App'),
+  require('./Transaction')
 ];

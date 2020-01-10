@@ -26,7 +26,7 @@ const createHttpAgentRoot = fetch => (key, settings) => {
       apiUrl + path,
       method,
       removeNullProperties(headers),
-      body
+      JSON.stringify(body)
     );
 
     return requestHandler(request);
