@@ -62,7 +62,11 @@ const createWsAgentRoot = WebSocket => (key, settings) => {
   return path => new Observable(subscriber => {
     const wsUri = `wss://${settings.host}${port}/${path}`;
 
-    const client = new WebSocket(wsUri);
+    const headers = {
+      Authorization: `Bearer ${key}`
+    };
+
+    const client = new WebSocket(wsUri, undefined, {headers});
     client.on('open', () => subscriber.next(client));
     client.on('error', err => subscriber.error(err));
   });
