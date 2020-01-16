@@ -24,17 +24,17 @@ const createAppHandler = (
           } = data;
 
           const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
-
           await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
-          break;
 
+          break;
         case 'complete':
           res(data);
           ws.close();
-          break;
 
+          break;
         default:
           console.log(data);
+
           break;
       }
     });

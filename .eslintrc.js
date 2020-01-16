@@ -1,6 +1,3 @@
-// As we don't use webpack in the common-ui folder,
-// we can use "babel-module"
-
 module.exports = {
   rules: {
     'no-use-before-define': [0],
