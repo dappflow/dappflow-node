@@ -38,10 +38,10 @@ const wsClient = wsAgent => resourceDetails => {
   return wsAgent(path);
 };
 
-const createResourcesRoot = resourcesList => (httpAgent, wsAgent, signer) => resourcesList
+const createResourcesRoot = resourcesList => (httpAgent, wsAgent, signer, orgId) => resourcesList
   .reduce((builtResources, resourceBuilder) => Object.assign(
     builtResources,
-    resourceBuilder(httpClient(httpAgent), wsClient(wsAgent), builtResources, signer)
+    resourceBuilder(httpClient(httpAgent), wsClient(wsAgent), builtResources, signer, orgId)
   ), {});
 
 module.exports = {
