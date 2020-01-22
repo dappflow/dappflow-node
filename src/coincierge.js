@@ -3,8 +3,8 @@ const {createResources} = require('./resource');
 
 const SETTINGS = {
   host: 'localhost',
-  httpPort: '8446',
-  wsPort: '8446'
+  httpPort: '8445',
+  wsPort: '8445'
 };
 
 const init = async ({clientSecret, clientId}, signer) => {
