@@ -42,7 +42,13 @@ const createAppHandler = (
   });
 });
 
-const appResource = (httpClient, wsAgent, coincierge, signer, orgId) => {
+const appResource = ({
+  httpClient,
+  wsAgent,
+  coincierge,
+  signer,
+  orgId
+}) => {
   const basePath = `orgs/${orgId}/apps`;
 
   const apps = {
