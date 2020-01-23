@@ -11,16 +11,10 @@ const init = async ({clientSecret, clientId}, signer) => {
   const key = await getAccessToken({clientSecret, clientId});
 
   const httpAgent = createHttpAgent(key, SETTINGS);
-  const org = await httpAgent('GET', `orgs?clientId=${clientId}`);
   const wsAgent = createWsAgent(key, SETTINGS);
 
   const coincierge = {
-    ...createResources({
-      httpAgent,
-      wsAgent,
-      signer,
-      orgId: org.id
-    }),
+    ...createResources(httpAgent, wsAgent, signer),
     settings: SETTINGS // helpful to retrieve the current settings used
   };
 
