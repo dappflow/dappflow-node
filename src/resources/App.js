@@ -42,8 +42,9 @@ const createAppHandler = (
   });
 });
 
-const appResource = (httpClient, wsAgent, coincierge, signer) => {
-  const basePath = 'apps';
+const appResource = async (httpClient, wsAgent, coincierge, signer) => {
+  const org = await httpClient('GET', 'orgs');
+  const basePath = `orgs/${org.id}/apps`;
 
   const apps = {
     create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), coincierge, signer),
