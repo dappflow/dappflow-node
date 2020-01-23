@@ -12,9 +12,10 @@ const init = async ({clientSecret, clientId}, signer) => {
 
   const httpAgent = createHttpAgent(key, SETTINGS);
   const wsAgent = createWsAgent(key, SETTINGS);
+  const resources = await createResources(httpAgent, wsAgent, signer);
 
   const coincierge = {
-    ...createResources(httpAgent, wsAgent, signer),
+    ...resources,
     settings: SETTINGS // helpful to retrieve the current settings used
   };
 

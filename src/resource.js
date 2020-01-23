@@ -38,11 +38,18 @@ const wsClient = wsAgent => resourceDetails => {
   return wsAgent(path);
 };
 
-const createResourcesRoot = resourcesList => (httpAgent, wsAgent, signer) => resourcesList
-  .reduce((builtResources, resourceBuilder) => Object.assign(
-    builtResources,
-    resourceBuilder(httpClient(httpAgent), wsClient(wsAgent), builtResources, signer)
-  ), {});
+const createResourcesRoot = resourcesList => async (httpAgent, wsAgent, signer) => resourcesList
+  .reduce(async (prevBuiltResources, resourceBuilder) => {
+    const builtResources = await prevBuiltResources;
+    const resource = await resourceBuilder(
+      httpClient(httpAgent),
+      wsClient(wsAgent),
+      builtResources,
+      signer
+    );
+
+    return Object.assign(builtResources, resource);
+  }, Promise.resolve({}));
 
 module.exports = {
   createResources: createResourcesRoot(resources),
