@@ -3,8 +3,8 @@ const createAppHandler = (
   wsClient,
   coincierge,
   signer
-) => async params => new Promise((res, rej) => {
-  wsClient.subscribe(async ws => {
+) => async ({orgId, ...params}) => new Promise((res, rej) => {
+  wsClient({orgId}).subscribe(async ws => {
     ws.send(JSON.stringify(params));
 
     ws.on('message', async message => {
@@ -23,7 +23,14 @@ const createAppHandler = (
             appId
           } = data;
 
-          const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
+          const signedTx = await signer({
+            nonce,
+            to,
+            value,
+            data: inputData,
+            gasLimit,
+            gasPrice
+          });
           await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 
           break;
@@ -43,8 +50,7 @@ const createAppHandler = (
 });
 
 const appResource = async (httpClient, wsAgent, coincierge, signer) => {
-  const org = await httpClient('GET', 'orgs');
-  const basePath = `orgs/${org.id}/apps`;
+  const basePath = 'orgs/{orgId}/apps';
 
   const apps = {
     create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), coincierge, signer),

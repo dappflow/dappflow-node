@@ -32,10 +32,12 @@ const httpClient = httpAgent => resourceDetails => {
   };
 };
 
-const wsClient = wsAgent => resourceDetails => {
+const wsClient = wsAgent => resourceDetails => requestParams => {
   const {path = ''} = resourceDetails;
 
-  return wsAgent(path);
+  const url = constructUrlFromParams(path, requestParams);
+
+  return wsAgent(url);
 };
 
 const createResourcesRoot = resourcesList => async (httpAgent, wsAgent, signer) => resourcesList

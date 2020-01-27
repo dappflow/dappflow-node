@@ -24,7 +24,9 @@
     "prettier": "^1.16.4"
   },
   "dependencies": {
+    "@coincierge/eth-utils": "1.0.0",
     "ava": "^2.4.0",
+    "ethers": "^4.0.43",
     "lodash.isnumber": "^3.0.3",
     "lodash.size": "^4.2.0",
     "qs": "^6.9.0",
