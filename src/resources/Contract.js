@@ -1,72 +1,117 @@
-const createMethodCalls = (rpcCall, contract, appId) => {
+const validate = require('@coincierge/common/data/validations/validateSmartContractInputs');
+
+const createMethodCalls = ({
+  httpClient,
+  contract,
+  appId,
+  coincierge,
+  signer
+}) => {
   const methods = {};
   contract.abi
     .filter(({type}) => type === 'function')
     .forEach(method => {
       methods[method.name] = method.stateMutability === 'view'
         ? callContractMethod({
-          rpcCall,
+          httpClient,
           appId,
           method: method.name,
           contractInterface: contract.interface,
-          contractAddress: contract.address
+          contractAddress: contract.address,
+          methodInputs: method.inputs
         })
         : sendTransaction({
-          rpcCall,
+          httpClient,
           appId,
           method: method.name,
           contractInterface: contract.interface,
-          contractAddress: contract.address
+          contractAddress: contract.address,
+          contractId: contract.id,
+          methodInputs: method.inputs,
+          coincierge,
+          signer
         });
     });
   return methods;
 };
 
 const sendTransaction = ({
-  rpcCall,
+  httpClient,
   appId,
   method,
   contractInterface,
-  contractAddress
-}) => params => {
+  contractAddress,
+  contractId,
+  coincierge,
+  signer,
+  methodInputs
+}) => async (params, from) => {
+  validate(methodInputs, params);
+
   const body = {
     method: 'create_transaction',
     parameters: {
       contractInterface,
       contractAddress,
+      contractId,
+      from,
       method,
       params
     }
   };
-  return rpcCall(body, {appId});
+  const {result} = await httpClient(body, {appId});
+  const {
+    nonce,
+    to,
+    value,
+    inputData,
+    gasLimit,
+    gasPrice,
+    id: txId
+  } = result;
+  const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
+
+  return await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 };
+
 const callContractMethod = ({
-  rpcCall,
+  httpClient,
   appId,
   method,
   contractInterface,
-  contractAddress
-}) => params => {
+  contractAddress,
+  methodInputs
+}) => (params, from) => {
+  validate(methodInputs, params);
+
   const body = {
     method: 'call_contract_method',
     parameters: {
       contractInterface,
       contractAddress,
       method,
-      args: params
+      from,
+      params
     }
   };
 
-  return rpcCall(body, {appId});
+  return httpClient(body, {appId});
 };
 
-const retrieveInstanceHandler = (httpClient, getInstance, ...params) => async ({appId, contractId}) => {
+const retrieveInstanceHandler = (
+  httpClient,
+  getInstance,
+  coincierge,
+  signer
+) => async ({appId, contractId}) => {
   const contract = await getInstance({appId, contractId});
-  const methods = await createMethodCalls(httpClient, contract, appId);
+  const methods = await createMethodCalls({
+    httpClient, contract, appId, coincierge, signer
+  });
   return methods;
 };
 
-const contractResource = httpClient => {
+const contractResource = (httpClient, wsAgent, coincierge, signer) => {
   const basePath = 'apps';
 
   const contracts = {
@@ -83,7 +128,9 @@ const contractResource = httpClient => {
       httpClient({
         method: 'GET',
         path: `${basePath}/{appId}/contracts/{contractId}/instance`
-      })
+      }),
+      coincierge,
+      signer
     )
   };
 
