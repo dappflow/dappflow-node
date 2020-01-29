@@ -127,7 +127,7 @@ const contractResource = (httpClient, wsAgent, coincierge, signer) => {
       }),
       httpClient({
         method: 'GET',
-        path: `${basePath}/{appId}/contracts/{contractId}/instance`
+        path: `${basePath}/{appId}/contracts/{contractId}`
       }),
       coincierge,
       signer
