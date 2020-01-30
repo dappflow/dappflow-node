@@ -1,5 +1,6 @@
 const {getAccessToken, createHttpAgent, createWsAgent} = require('./agent');
 const {createResources} = require('./resource');
+const {signer: sdkSigner} = require('./signer');
 
 const SETTINGS = {
   host: 'localhost',
@@ -7,7 +8,7 @@ const SETTINGS = {
   wsPort: '8445'
 };
 
-const init = async ({clientSecret, clientId}, signer) => {
+const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKey)) => {
   const key = await getAccessToken({clientSecret, clientId});
 
   const httpAgent = createHttpAgent(key, SETTINGS);
