@@ -1,42 +1,8 @@
 const validate = require('@coincierge/common/data/validations/validateSmartContractInputs');
+const {partial} = require('@coincierge/common/fn');
+const {createMethodCalls} = require('@coincierge/common/helpers/sdk');
 
-const createMethodCalls = ({
-  httpClient,
-  contract,
-  appId,
-  coincierge,
-  signer
-}) => {
-  const methods = {};
-  contract.abi
-    .filter(({type}) => type === 'function')
-    .forEach(method => {
-      methods[method.name] = method.stateMutability === 'view'
-        ? callContractMethod({
-          httpClient,
-          appId,
-          method: method.name,
-          contractInterface: contract.interface,
-          contractAddress: contract.address,
-          methodInputs: method.inputs
-        })
-        : sendTransaction({
-          httpClient,
-          appId,
-          method: method.name,
-          contractInterface: contract.interface,
-          contractAddress: contract.address,
-          contractId: contract.id,
-          methodInputs: method.inputs,
-          coincierge,
-          signer
-        });
-    });
-  return methods;
-};
-
-const sendTransaction = ({
-  httpClient,
+const sendTransaction = (httpClient, {
   appId,
   method,
   contractInterface,
@@ -74,8 +40,7 @@ const sendTransaction = ({
   return await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 };
 
-const callContractMethod = ({
-  httpClient,
+const callContractMethod = (httpClient, {
   appId,
   method,
   contractInterface,
@@ -99,32 +64,35 @@ const callContractMethod = ({
 };
 
 const retrieveInstanceHandler = (
-  httpClient,
   getInstance,
   coincierge,
   signer
 ) => async ({appId, contractId}) => {
   const contract = await getInstance({appId, contractId});
-  const methods = await createMethodCalls({
-    httpClient, contract, appId, coincierge, signer
+
+  return await createMethodCalls({
+    contract,
+    appId,
+    coincierge,
+    signer
   });
-  return methods;
 };
 
 const contractResource = (httpClient, wsAgent, coincierge, signer) => {
   const basePath = 'apps';
+  const rpcCall = httpClient({
+    method: 'POST',
+    path: `${basePath}/{appId}/rpc`
+  });
 
   const contracts = {
     list: httpClient({
       method: 'GET',
       path: `${basePath}/{appId}/contracts`
     }),
-
+    callContractMethod: partial(callContractMethod, rpcCall),
+    sendTransaction: partial(sendTransaction, rpcCall),
     retrieveInstance: retrieveInstanceHandler(
-      httpClient({
-        method: 'POST',
-        path: `${basePath}/{appId}/rpc`
-      }),
       httpClient({
         method: 'GET',
         path: `${basePath}/{appId}/contracts/{contractId}`
