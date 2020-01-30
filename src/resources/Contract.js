@@ -35,7 +35,14 @@ const sendTransaction = (httpClient, {
     gasPrice,
     id: txId
   } = result;
-  const signedTx = await signer(nonce, to, value, inputData, gasLimit, gasPrice);
+  const signedTx = await signer({
+    nonce,
+    to,
+    value,
+    inputData,
+    gasLimit,
+    gasPrice
+  });
 
   return await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 };

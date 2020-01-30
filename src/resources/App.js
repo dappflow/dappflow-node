@@ -40,7 +40,6 @@ const createAppHandler = (
 
           break;
         default:
-          console.log(data);
 
           break;
       }
