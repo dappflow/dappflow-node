@@ -1,6 +1,6 @@
 const validate = require('@coincierge/common/data/validations/validateSmartContractInputs');
 const {partial} = require('@coincierge/common/fn');
-const {createMethodCalls} = require('@coincierge/common/helpers/sdk');
+const {createMethodCalls} = require('../helpers');
 
 const sendTransaction = (httpClient, {
   appId,
