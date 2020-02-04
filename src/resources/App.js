@@ -6,7 +6,6 @@ const createAppHandler = (
 ) => async ({orgId, ...params}) => new Promise((res, rej) => {
   wsClient({orgId}).subscribe(async ws => {
     ws.send(JSON.stringify(params));
-
     ws.on('message', async message => {
       const {type, data} = JSON.parse(message);
 
@@ -31,12 +30,14 @@ const createAppHandler = (
             gasLimit,
             gasPrice
           });
+
           await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 
           break;
         case 'complete':
           res(data);
           ws.close();
+          console.log(data);
 
           break;
         default:
