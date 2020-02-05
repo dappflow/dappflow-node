@@ -39,7 +39,7 @@ const sendTransaction = (httpAgent, {
     nonce,
     to,
     value,
-    inputData,
+    data: inputData,
     gasLimit,
     gasPrice
   });
