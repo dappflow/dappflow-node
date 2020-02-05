@@ -40,16 +40,21 @@ const wsClient = wsAgent => resourceDetails => requestParams => {
   return wsAgent(url);
 };
 
-const createResourcesRoot = resourcesList => async (httpAgent, wsAgent, signer, getAccessToken) => resourcesList
+const createResourcesRoot = resourcesList => async ({
+  httpAgent,
+  wsAgent,
+  signer,
+  getAccessToken
+}) => resourcesList
   .reduce(async (prevBuiltResources, resourceBuilder) => {
     const builtResources = await prevBuiltResources;
-    const resource = await resourceBuilder(
-      httpClient(httpAgent),
-      wsClient(wsAgent),
-      builtResources,
+    const resource = await resourceBuilder({
+      httpAgent: httpClient(httpAgent),
+      wsAgent: wsClient(wsAgent),
+      coincierge: builtResources,
       signer,
       getAccessToken
-    );
+    });
 
     return Object.assign(builtResources, resource);
   }, Promise.resolve({}));

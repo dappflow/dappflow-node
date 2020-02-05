@@ -13,7 +13,12 @@ const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKe
 
   const httpAgent = createHttpAgent(key, SETTINGS);
   const wsAgent = createWsAgent(key, SETTINGS);
-  const resources = await createResources(httpAgent, wsAgent, signer, getAccessToken({clientSecret, clientId}));
+  const resources = await createResources({
+    httpAgent,
+    wsAgent,
+    signer,
+    getAccessToken: getAccessToken({clientSecret, clientId})
+  });
 
   const coincierge = {
     ...resources,

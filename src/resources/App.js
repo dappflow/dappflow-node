@@ -53,19 +53,25 @@ const createAppHandler = (
   });
 });
 
-const appResource = async (httpClient, wsAgent, coincierge, signer, getAccessToken) => {
+const appResource = async ({
+  httpAgent,
+  wsAgent,
+  coincierge,
+  signer,
+  getAccessToken
+}) => {
   const basePath = 'orgs/{orgId}/apps';
   const token = await getAccessToken();
 
   const apps = {
     create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, coincierge, signer),
 
-    fetch: httpClient({
+    fetch: httpAgent({
       method: 'GET',
       path: `${basePath}/{appId}`
     }),
 
-    list: httpClient({
+    list: httpAgent({
       method: 'GET',
       path: basePath
     })
