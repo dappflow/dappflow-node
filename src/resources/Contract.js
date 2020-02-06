@@ -75,11 +75,12 @@ const callContractMethod = (httpClient, {
   return result;
 };
 
-const retrieveInstanceHandler = (
+const getInstanceInstanceHandler = async (
   getInstance,
   coincierge,
-  signer
-) => async ({appId, contractId}) => {
+  signer,
+  {appId, contractId}
+) => {
   const contract = await getInstance({appId, contractId});
 
   return await createMethodCalls({
@@ -104,7 +105,8 @@ const contractResource = (httpClient, wsAgent, coincierge, signer) => {
     }),
     callContractMethod: partial(callContractMethod, rpcCall),
     sendTransaction: partial(sendTransaction, rpcCall),
-    retrieveInstance: retrieveInstanceHandler(
+    getInstance: partial(
+      getInstanceInstanceHandler,
       httpClient({
         method: 'GET',
         path: `${basePath}/{appId}/contracts/{contractId}`
