@@ -12,6 +12,10 @@ const sendTransaction = (httpClient, {
   signer,
   methodInputs
 }) => async (params, from) => {
+  if(!from) {
+    throw new Error(`No 'from' address specified in method call ${method}`);
+  }
+
   validate(methodInputs, params);
 
   const body = {
