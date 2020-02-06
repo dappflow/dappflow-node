@@ -53,7 +53,7 @@ const callContractMethod = (httpClient, {
   contractInterface,
   contractAddress,
   methodInputs
-}) => (params, from) => {
+}) => async (params, from) => {
   validate(methodInputs, params);
 
   const body = {
@@ -66,8 +66,9 @@ const callContractMethod = (httpClient, {
       params
     }
   };
+  const {result} = await httpClient(body, {appId});
 
-  return httpClient(body, {appId});
+  return result;
 };
 
 const retrieveInstanceHandler = (
