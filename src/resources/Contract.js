@@ -39,7 +39,7 @@ const sendTransaction = (httpClient, {
     nonce,
     to,
     value,
-    inputData,
+    data: inputData,
     gasLimit,
     gasPrice
   });
