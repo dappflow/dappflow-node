@@ -1,5 +1,6 @@
 const validate = require('@coincierge/common/data/validations/validateSmartContractInputs');
 const {partial} = require('@coincierge/common/fn');
+const EventEmitter = require('events');
 const {createMethodCalls} = require('../helpers');
 
 const sendTransaction = (httpClient, {
@@ -48,7 +49,19 @@ const sendTransaction = (httpClient, {
     gasPrice
   });
 
-  return await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
+  const res = await coincierge.transactions.finalize({txId, appId});
+  const transactionStatusEventEmitter = new EventEmitter();
+  res.subscribe(ws => {
+    const data = JSON.stringify({signedTx: signedTx.toString('hex')});
+
+    ws.send(data);
+    ws.on('message', async message => {
+      const {type, ...data} = JSON.parse(message);
+      transactionStatusEventEmitter.emit(type, data);
+    });
+  });
+
+  return transactionStatusEventEmitter;
 };
 
 const callContractMethod = (httpClient, {
