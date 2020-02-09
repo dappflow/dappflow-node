@@ -37,7 +37,6 @@ const createAppHandler = (
         case 'complete':
           res(data);
           ws.close();
-          console.log(data);
 
           break;
         default:

@@ -12,11 +12,7 @@ const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKe
   const key = await getAccessToken({clientSecret, clientId});
 
   const httpAgent = createHttpAgent(key, SETTINGS);
-  const wsAgent = createWsAgent(key, {
-    host: 'localhost',
-    httpPort: '8446',
-    wsPort: '8446'
-  });
+  const wsAgent = createWsAgent(key, SETTINGS);
   const resources = await createResources(httpAgent, wsAgent, signer);
 
   const coincierge = {
