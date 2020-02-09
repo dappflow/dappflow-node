@@ -39,7 +39,7 @@ const sendTransaction = (httpClient, {
     nonce,
     to,
     value,
-    inputData,
+    data: inputData,
     gasLimit,
     gasPrice
   });
@@ -86,27 +86,31 @@ const retrieveInstanceHandler = (
 };
 
 const contractResource = (httpClient, wsAgent, coincierge, signer) => {
-  const basePath = 'apps';
+  const basePath = 'apps/{appId}';
   const rpcCall = httpClient({
     method: 'POST',
-    path: `${basePath}/{appId}/rpc`
+    path: `${basePath}/rpc`
   });
 
   const contracts = {
     list: httpClient({
       method: 'GET',
-      path: `${basePath}/{appId}/contracts`
+      path: `${basePath}/contracts`
     }),
     callContractMethod: partial(callContractMethod, rpcCall),
     sendTransaction: partial(sendTransaction, rpcCall),
     retrieveInstance: retrieveInstanceHandler(
       httpClient({
         method: 'GET',
-        path: `${basePath}/{appId}/contracts/{contractId}`
+        path: `${basePath}/contracts/{contractId}`
       }),
       coincierge,
       signer
-    )
+    ),
+    transfers: httpClient({
+      method: 'GET',
+      path: `${basePath}/tokens/{contractAddress}/transfers`
+    })
   };
 
   return {contracts};
