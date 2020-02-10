@@ -6,7 +6,7 @@ const {removeNullProperties} = require('@coincierge/common/fn');
 const {fetch} = require('@coincierge/common/helpers/api');
 const {requestHandler} = require('./requestHandler');
 
-const getAccessToken = async ({clientId, clientSecret}) => {
+const getAccessToken = ({clientId, clientSecret}) => async () => {
   const params = new URLSearchParams();
   params.set('grant_type', 'client_credentials');
   params.set('client_id', clientId);

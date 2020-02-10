@@ -2,7 +2,7 @@ const validate = require('@coincierge/common/data/validations/validateSmartContr
 const {partial} = require('@coincierge/common/fn');
 const {createMethodCalls} = require('../helpers');
 
-const sendTransaction = (httpClient, {
+const sendTransaction = (httpAgent, {
   appId,
   method,
   contractInterface,
@@ -25,7 +25,7 @@ const sendTransaction = (httpClient, {
       params
     }
   };
-  const {result} = await httpClient(body, {appId});
+  const {result} = await httpAgent(body, {appId});
   const {
     nonce,
     to,
@@ -47,7 +47,7 @@ const sendTransaction = (httpClient, {
   return await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
 };
 
-const callContractMethod = (httpClient, {
+const callContractMethod = (httpAgent, {
   appId,
   method,
   contractInterface,
@@ -67,7 +67,7 @@ const callContractMethod = (httpClient, {
     }
   };
 
-  return httpClient(body, {appId});
+  return httpAgent(body, {appId});
 };
 
 const retrieveInstanceHandler = (
@@ -85,22 +85,26 @@ const retrieveInstanceHandler = (
   });
 };
 
-const contractResource = (httpClient, wsAgent, coincierge, signer) => {
+const contractResource = ({
+  httpAgent,
+  coincierge,
+  signer
+}) => {
   const basePath = 'apps/{appId}';
-  const rpcCall = httpClient({
+  const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/rpc`
   });
 
   const contracts = {
-    list: httpClient({
+    list: httpAgent({
       method: 'GET',
       path: `${basePath}/contracts`
     }),
     callContractMethod: partial(callContractMethod, rpcCall),
     sendTransaction: partial(sendTransaction, rpcCall),
     retrieveInstance: retrieveInstanceHandler(
-      httpClient({
+      httpAgent({
         method: 'GET',
         path: `${basePath}/contracts/{contractId}`
       }),

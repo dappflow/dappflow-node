@@ -1,8 +1,8 @@
-const transactionResource = httpClient => {
+const transactionResource = ({httpAgent}) => {
   const basePath = 'transactions';
 
   const transactions = {
-    finalize: httpClient({
+    finalize: httpAgent({
       method: 'PATCH',
       path: `apps/{appId}/${basePath}/{txId}/finalize`
     })

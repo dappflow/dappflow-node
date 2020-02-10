@@ -9,11 +9,16 @@ const SETTINGS = {
 };
 
 const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKey)) => {
-  const key = await getAccessToken({clientSecret, clientId});
+  const key = await getAccessToken({clientSecret, clientId})();
 
   const httpAgent = createHttpAgent(key, SETTINGS);
   const wsAgent = createWsAgent(key, SETTINGS);
-  const resources = await createResources(httpAgent, wsAgent, signer);
+  const resources = await createResources({
+    httpAgent,
+    wsAgent,
+    signer,
+    getAccessToken: getAccessToken({clientSecret, clientId})
+  });
 
   const coincierge = {
     ...resources,
