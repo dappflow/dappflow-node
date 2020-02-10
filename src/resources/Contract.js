@@ -3,7 +3,7 @@ const {partial} = require('@coincierge/common/fn');
 const EventEmitter = require('events');
 const {createMethodCalls} = require('../helpers');
 
-const sendTransaction = (httpClient, {
+const sendTransaction = (httpAgent, {
   appId,
   method,
   contractInterface,
@@ -30,7 +30,7 @@ const sendTransaction = (httpClient, {
       params
     }
   };
-  const {result} = await httpClient(body, {appId});
+  const {result} = await httpAgent(body, {appId});
   const {
     nonce,
     to,
@@ -64,7 +64,7 @@ const sendTransaction = (httpClient, {
   return transactionStatusEventEmitter;
 };
 
-const callContractMethod = (httpClient, {
+const callContractMethod = (httpAgent, {
   appId,
   method,
   contractInterface,
@@ -104,15 +104,19 @@ const getInstanceInstanceHandler = async (
   });
 };
 
-const contractResource = (httpClient, wsAgent, coincierge, signer) => {
+const contractResource = ({
+  httpAgent,
+  coincierge,
+  signer
+}) => {
   const basePath = 'apps';
-  const rpcCall = httpClient({
+  const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/{appId}/rpc`
   });
 
   const contracts = {
-    list: httpClient({
+    list: httpAgent({
       method: 'GET',
       path: `${basePath}/{appId}/contracts`
     }),

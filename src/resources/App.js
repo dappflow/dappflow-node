@@ -1,11 +1,12 @@
 /* eslint-disable no-case-declarations */
 const createAppHandler = (
   wsClient,
+  token,
   coincierge,
   signer
 ) => async ({orgId, ...params}) => new Promise((res, rej) => {
   wsClient({orgId}).subscribe(async ws => {
-    ws.send(JSON.stringify(params));
+    ws.send(JSON.stringify({token}));
 
     ws.on('message', async message => {
       const {type, data} = JSON.parse(message);
@@ -39,6 +40,10 @@ const createAppHandler = (
           ws.close();
 
           break;
+        case 'authorize':
+          ws.send(JSON.stringify(params));
+
+          break;
         default:
 
           break;
@@ -48,18 +53,25 @@ const createAppHandler = (
   });
 });
 
-const appResource = async (httpClient, wsAgent, coincierge, signer) => {
+const appResource = async ({
+  httpAgent,
+  wsAgent,
+  coincierge,
+  signer,
+  getAccessToken
+}) => {
   const basePath = 'orgs/{orgId}/apps';
+  const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), coincierge, signer),
+    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, coincierge, signer),
 
-    fetch: httpClient({
+    fetch: httpAgent({
       method: 'GET',
       path: `${basePath}/{appId}`
     }),
 
-    list: httpClient({
+    list: httpAgent({
       method: 'GET',
       path: basePath
     })
