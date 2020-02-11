@@ -83,7 +83,7 @@ const callContractMethod = (httpAgent, {
       params
     }
   };
-  const {result} = await httpClient(body, {appId});
+  const {result} = await httpAgent(body, {appId});
 
   return result;
 };
@@ -124,7 +124,7 @@ const contractResource = ({
     sendTransaction: partial(sendTransaction, rpcCall),
     getInstance: partial(
       getInstanceInstanceHandler,
-      httpClient({
+      httpAgent({
         method: 'GET',
         path: `${basePath}/{appId}/contracts/{contractId}`
       }),
