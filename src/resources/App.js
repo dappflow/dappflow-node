@@ -38,6 +38,7 @@ const createAppHandler = (
 
             ws.send(data);
           });
+          
           break;
         case 'complete':
           res(data);

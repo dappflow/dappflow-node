@@ -109,16 +109,16 @@ const contractResource = ({
   coincierge,
   signer
 }) => {
-  const basePath = 'apps';
+  const basePath = 'apps/{appId}';
   const rpcCall = httpAgent({
     method: 'POST',
-    path: `${basePath}/{appId}/rpc`
+    path: `${basePath}/rpc`
   });
 
   const contracts = {
     list: httpAgent({
       method: 'GET',
-      path: `${basePath}/{appId}/contracts`
+      path: `${basePath}/contracts`
     }),
     callContractMethod: partial(callContractMethod, rpcCall),
     sendTransaction: partial(sendTransaction, rpcCall),
@@ -126,11 +126,15 @@ const contractResource = ({
       getInstanceInstanceHandler,
       httpAgent({
         method: 'GET',
-        path: `${basePath}/{appId}/contracts/{contractId}`
+        path: `${basePath}/contracts/{contractId}`
       }),
       coincierge,
       signer
-    )
+    ),
+    transfers: httpClient({
+      method: 'GET',
+      path: `${basePath}/tokens/{contractAddress}/transfers`
+    })
   };
 
   return {contracts};
