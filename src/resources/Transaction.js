@@ -1,9 +1,9 @@
-const transactionResource = (httpClient, wsAgent) => {
+const transactionResource = ({wsAgent}) => {
   const basePath = 'transactions';
 
   const transactions = {
     finalize: wsAgent({
-      method: 'PATCH',
+      method: 'GET',
       path: `apps/{appId}/${basePath}/{txId}/finalize`
     })
   };
