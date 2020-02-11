@@ -32,8 +32,12 @@ const createAppHandler = (
             gasLimit,
             gasPrice
           });
-          await coincierge.transactions.finalize({signedTx: signedTx.toString('hex')}, {txId, appId});
+          const sub = await coincierge.transactions.finalize({txId, appId});
+          sub.subscribe(ws => {
+            const data = JSON.stringify({signedTx: signedTx.toString('hex')});
 
+            ws.send(data);
+          });
           break;
         case 'complete':
           res(data);
