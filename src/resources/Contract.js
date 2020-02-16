@@ -131,7 +131,7 @@ const contractResource = ({
       coincierge,
       signer
     ),
-    transfers: httpClient({
+    transfers: httpAgent({
       method: 'GET',
       path: `${basePath}/tokens/{contractAddress}/transfers`
     })
