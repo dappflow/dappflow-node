@@ -6,8 +6,6 @@ const {createMethodCalls} = require('../helpers');
 const sendTransaction = (httpAgent, {
   appId,
   method,
-  contractInterface,
-  contractAddress,
   contractId,
   coincierge,
   signer,
@@ -22,15 +20,13 @@ const sendTransaction = (httpAgent, {
   const body = {
     method: 'create_transaction',
     parameters: {
-      contractInterface,
-      contractAddress,
       contractId,
       from,
       method,
       params
     }
   };
-  const {result} = await httpAgent(body, {appId});
+  const {result} = await httpAgent(body, {appId, contractId});
   const {
     nonce,
     to,
@@ -67,23 +63,20 @@ const sendTransaction = (httpAgent, {
 const callContractMethod = (httpAgent, {
   appId,
   method,
-  contractInterface,
-  contractAddress,
-  methodInputs
+  methodInputs,
+  contractId
 }) => async (params, from) => {
   validate(methodInputs, params);
 
   const body = {
     method: 'call_contract_method',
     parameters: {
-      contractInterface,
-      contractAddress,
       method,
       from,
       params
     }
   };
-  const {result} = await httpAgent(body, {appId});
+  const {result} = await httpAgent(body, {appId, contractId});
 
   return result;
 };
@@ -112,7 +105,7 @@ const contractResource = ({
   const basePath = 'apps/{appId}';
   const rpcCall = httpAgent({
     method: 'POST',
-    path: `${basePath}/rpc`
+    path: `${basePath}/contracts/{contractId}/rpc`
   });
 
   const contracts = {
