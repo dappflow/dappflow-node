@@ -18,11 +18,10 @@ const sendTransaction = (httpAgent, {
   validate(methodInputs, params);
 
   const body = {
-    method: 'create_transaction',
+    method,
     parameters: {
       contractId,
       from,
-      method,
       params
     }
   };
@@ -69,9 +68,8 @@ const callContractMethod = (httpAgent, {
   validate(methodInputs, params);
 
   const body = {
-    method: 'call_contract_method',
+    method,
     parameters: {
-      method,
       from,
       params
     }
