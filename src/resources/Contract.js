@@ -20,7 +20,6 @@ const sendTransaction = (httpAgent, {
   const body = {
     method,
     parameters: {
-      contractId,
       from,
       params
     }
