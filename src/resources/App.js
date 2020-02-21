@@ -10,7 +10,7 @@ const createAppHandler = (
 
     ws.on('message', async message => {
       const {type, data} = JSON.parse(message);
-      console.log(message);
+
       switch(type) {
         case 'signable_tx':
           const {
