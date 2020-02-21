@@ -10,7 +10,7 @@ const createAppHandler = (
 
     ws.on('message', async message => {
       const {type, data} = JSON.parse(message);
-
+      console.log(message);
       switch(type) {
         case 'signable_tx':
           const {
@@ -69,7 +69,7 @@ const appResource = async ({
   const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `/ws/${basePath}/create-app`}), token, coincierge, signer),
+    create: createAppHandler(wsAgent({path: `/ws${basePath}/create-app`}), token, coincierge, signer),
 
     fetch: httpAgent({
       method: 'GET',
