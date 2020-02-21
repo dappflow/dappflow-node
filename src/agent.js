@@ -31,7 +31,7 @@ const createHttpAgentRoot = fetch => (key, settings) => {
     ? `:${settings.httpPort}`
     : '';
 
-  const apiUrl = `https://${settings.host}${port}/`;
+  const apiUrl = `https://${settings.host}${port}`;
 
   return async (method, path, body) => {
     const headers = {
@@ -60,7 +60,7 @@ const createWsAgentRoot = WebSocket => (key, settings) => {
     : '';
 
   return path => new Observable(subscriber => {
-    const wsUri = `wss://${settings.host}${port}/${path}`;
+    const wsUri = `wss://${settings.host}${port}${path}`;
 
     const headers = {
       Authorization: `Bearer ${key}`

@@ -38,7 +38,7 @@ const createAppHandler = (
 
             ws.send(data);
           });
-          
+
           break;
         case 'complete':
           res(data);
@@ -65,11 +65,11 @@ const appResource = async ({
   signer,
   getAccessToken
 }) => {
-  const basePath = 'orgs/{orgId}/apps';
+  const basePath = '/orgs/{orgId}/apps';
   const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, coincierge, signer),
+    create: createAppHandler(wsAgent({path: `/ws/${basePath}/create-app`}), token, coincierge, signer),
 
     fetch: httpAgent({
       method: 'GET',
