@@ -69,7 +69,7 @@ const appResource = async ({
   const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `/ws${basePath}/create-app`}), token, coincierge, signer),
+    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, coincierge, signer),
 
     fetch: httpAgent({
       method: 'GET',
