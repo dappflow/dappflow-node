@@ -38,7 +38,7 @@ const createAppHandler = (
 
             ws.send(data);
           });
-          
+
           break;
         case 'complete':
           res(data);
@@ -65,7 +65,7 @@ const appResource = async ({
   signer,
   getAccessToken
 }) => {
-  const basePath = 'orgs/{orgId}/apps';
+  const basePath = '/orgs/{orgId}/apps';
   const token = await getAccessToken();
 
   const apps = {

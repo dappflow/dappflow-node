@@ -99,7 +99,7 @@ const contractResource = ({
   coincierge,
   signer
 }) => {
-  const basePath = 'apps/{appId}';
+  const basePath = '/apps/{appId}';
   const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/contracts/{contractId}/rpc`

@@ -4,7 +4,7 @@ const transactionResource = ({wsAgent}) => {
   const transactions = {
     finalize: wsAgent({
       method: 'GET',
-      path: `apps/{appId}/${basePath}/{txId}/finalize`
+      path: `/apps/{appId}/${basePath}/{txId}`
     })
   };
 
