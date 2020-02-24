@@ -121,9 +121,9 @@ const contractResource = ({
       coincierge,
       signer
     ),
-    transfers: httpAgent({
+    events: httpAgent({
       method: 'GET',
-      path: `${basePath}/tokens/{contractAddress}/transfers`
+      path: `${basePath}/contracts/{contractId}/events`
     })
   };
 
