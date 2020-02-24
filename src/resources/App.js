@@ -4,7 +4,9 @@ const createAppHandler = (
   token,
   coincierge,
   signer
-) => async ({orgId, ...params}) => new Promise((res, rej) => {
+) => async ({...params}) => new Promise((res, rej) => {
+  const {organization: {id: orgId}} = coincierge;
+
   wsClient({orgId}).subscribe(async ws => {
     ws.send(JSON.stringify({token}));
 

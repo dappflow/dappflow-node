@@ -45,19 +45,23 @@ const createResourcesRoot = resourcesList => async ({
   wsAgent,
   signer,
   getAccessToken
-}) => resourcesList
-  .reduce(async (prevBuiltResources, resourceBuilder) => {
-    const builtResources = await prevBuiltResources;
-    const resource = await resourceBuilder({
-      httpAgent: httpClient(httpAgent),
-      wsAgent: wsClient(wsAgent),
-      coincierge: builtResources,
-      signer,
-      getAccessToken
-    });
+}) => {
+  const organization = await httpAgent('GET', '/orgs');
 
-    return Object.assign(builtResources, resource);
-  }, Promise.resolve({}));
+  return resourcesList
+    .reduce(async (prevBuiltResources, resourceBuilder) => {
+      const builtResources = await prevBuiltResources;
+      const resource = await resourceBuilder({
+        httpAgent: httpClient(httpAgent),
+        wsAgent: wsClient(wsAgent),
+        coincierge: builtResources,
+        signer,
+        getAccessToken
+      });
+
+      return Object.assign(builtResources, resource);
+    }, Promise.resolve({organization}));
+};
 
 module.exports = {
   createResources: createResourcesRoot(resources),
