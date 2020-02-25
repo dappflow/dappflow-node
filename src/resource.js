@@ -1,5 +1,5 @@
 const resources = require('./resources');
-const {constructUrlFromParams} = require('./utils');
+const {constructUrlFromParams} = require('./utils/url');
 
 const httpClient = httpAgent => resourceDetails => {
   const {method, path = ''} = resourceDetails;

@@ -1,9 +1,9 @@
 const WebSocket = require('ws');
+const {reject, isNil} = require('rambda');
 const {URLSearchParams} = require('url');
 const {Observable} = require('rxjs');
 const uuid4 = require('uuid/v4');
-const {removeNullProperties} = require('@coincierge/common/fn');
-const {fetch} = require('@coincierge/common/helpers/api');
+const {fetch} = require('./utils/api');
 const {requestHandler} = require('./requestHandler');
 
 const getAccessToken = ({clientId, clientSecret}) => async () => {
@@ -46,7 +46,7 @@ const createHttpAgentRoot = fetch => (key, settings) => {
     const request = fetch(
       apiUrl + path,
       method,
-      removeNullProperties(headers),
+      reject(isNil)(headers),
       JSON.stringify(body)
     );
 

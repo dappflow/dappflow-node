@@ -1,8 +1,12 @@
 {
-  "name": "@coincierge/coincierge-node",
+  "name": "coincierge-node",
   "version": "1.0.0",
   "description": "Coincierge node.js SDK",
   "main": "src/coincierge.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valerioleo/coincierge-node"
+  },
   "author": "Valerio Leo <mail.valerioleo@gmail.com>",
   "private": true,
   "homepage": "https://coincierge.io",
@@ -10,30 +14,21 @@
     "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only"
   },
   "devDependencies": {
-    "@coincierge/common": "1.0.0",
-    "@coincierge/eth-utils": "1.0.0",
-    "chai": "~4.2.0",
-    "chai-as-promised": "~7.1.1",
-    "coveralls": "^3.0.0",
+    "ava": "^2.4.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-chai-friendly": "^0.4.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "mocha": "~6.1.4",
-    "nock": "^10.0.6",
-    "nyc": "^14.1.0",
-    "prettier": "^1.16.4"
+    "eslint-plugin-prettier": "^3.0.1"
   },
   "dependencies": {
-    "@coincierge/eth-utils": "1.0.0",
-    "ava": "^2.4.0",
+    "@hapi/joi": "^17.1.0",
     "ethers": "^4.0.43",
-    "lodash.isnumber": "^3.0.3",
-    "lodash.size": "^4.2.0",
+    "node-fetch": "^2.6.0",
     "qs": "^6.9.0",
+    "rambda": "^4.5.0",
     "rxjs": "^6.5.4",
-    "sinon": "^7.5.0",
     "uuid": "^3.3.3",
+    "web3-utils": "^1.2.6",
     "ws": "^7.2.1"
   }
 }

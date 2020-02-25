@@ -1,6 +1,6 @@
-const validate = require('@coincierge/common/data/validations/validateSmartContractInputs');
-const {partial} = require('@coincierge/common/fn');
+const {partial} = require('rambda');
 const EventEmitter = require('events');
+const validate = require('../utils/smartContract');
 const {createMethodCalls} = require('../helpers');
 
 const sendTransaction = (httpAgent, {
