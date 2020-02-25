@@ -1,0 +1,15 @@
+.history
+**/node_modules
+src/solidity/**/build
+design/
+.DS_Store
+app.log
+**/*/app*.log*
+**/*/*audit.json
+**/coverage
+**/coverageEnv
+**/coverage.json
+**/yarn-error.log
+operations/
+.idea
+.vscode/settings.json
