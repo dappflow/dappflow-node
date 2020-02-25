@@ -1,4 +1,3 @@
-
 const contractCallFactory = (state, coincierge) => {
   switch(state) {
     case 'view': return coincierge.contracts.callContractMethod;
