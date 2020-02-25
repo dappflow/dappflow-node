@@ -9,10 +9,8 @@ const SETTINGS = {
 };
 
 const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKey)) => {
-  const key = await getAccessToken({clientSecret, clientId})();
-
-  const httpAgent = createHttpAgent(key, SETTINGS);
-  const wsAgent = createWsAgent(key, SETTINGS);
+  const httpAgent = createHttpAgent({clientSecret, clientId}, SETTINGS);
+  const wsAgent = createWsAgent({clientSecret, clientId}, SETTINGS);
   const resources = await createResources({
     httpAgent,
     wsAgent,
