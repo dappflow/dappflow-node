@@ -23,6 +23,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.0",
     "ethers": "^4.0.43",
+    "jwt-decode": "^2.2.0",
     "node-fetch": "^2.6.0",
     "qs": "^6.9.0",
     "rambda": "^4.5.0",

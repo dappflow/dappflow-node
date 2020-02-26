@@ -1,12 +1,36 @@
 const WebSocket = require('ws');
 const {reject, isNil} = require('rambda');
 const {URLSearchParams} = require('url');
+const decode = require('jwt-decode');
 const {Observable} = require('rxjs');
 const uuid4 = require('uuid/v4');
 const {fetch} = require('./utils/api');
 const {requestHandler} = require('./requestHandler');
 
+const getTokenExpirationDate = encodedToken => {
+  const token = decode(encodedToken);
+  if(!token.exp) {
+    return null;
+  }
+
+  const date = new Date(0);
+  date.setUTCSeconds(token.exp);
+
+  return date;
+};
+
+const isTokenExpired = token => {
+  const expirationDate = getTokenExpirationDate(token);
+  return expirationDate < new Date();
+};
+
+let _accessToken;
+
 const getAccessToken = ({clientId, clientSecret}) => async () => {
+  if(_accessToken && !isTokenExpired(_accessToken)){
+    return _accessToken;
+  }
+
   const params = new URLSearchParams();
   params.set('grant_type', 'client_credentials');
   params.set('client_id', clientId);
@@ -23,10 +47,13 @@ const getAccessToken = ({clientId, clientSecret}) => async () => {
     params
   );
 
-  return grant.access_token;
+
+  _accessToken = grant.access_token;
+
+  return _accessToken;
 };
 
-const createHttpAgentRoot = fetch => (key, settings) => {
+const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
   const port = settings.httpPort
     ? `:${settings.httpPort}`
     : '';
@@ -34,8 +61,9 @@ const createHttpAgentRoot = fetch => (key, settings) => {
   const apiUrl = `https://${settings.host}${port}`;
 
   return async (method, path, body) => {
+    const accessToken = await getAccessToken({clientId, clientSecret})();
     const headers = {
-      Authorization: `Bearer ${key}`,
+      Authorization: `Bearer ${accessToken}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'Idempotency-Key': method === 'POST' && settings.network_max_retry > 0
@@ -54,16 +82,17 @@ const createHttpAgentRoot = fetch => (key, settings) => {
   };
 };
 
-const createWsAgentRoot = WebSocket => (key, settings) => {
+const createWsAgentRoot = WebSocket => ({clientId, clientSecret}, settings) => {
   const port = settings.wsPort
     ? `:${settings.wsPort}`
     : '';
 
-  return path => new Observable(subscriber => {
+  return path => new Observable(async subscriber => {
+    const accessToken = await getAccessToken({clientId, clientSecret})();
     const wsUri = `wss://${settings.host}${port}/ws${path}`;
 
     const headers = {
-      Authorization: `Bearer ${key}`
+      Authorization: `Bearer ${accessToken}`
     };
 
     const client = new WebSocket(wsUri, undefined, {headers});
