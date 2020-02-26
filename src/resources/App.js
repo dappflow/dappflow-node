@@ -32,7 +32,7 @@ const createAppHandler = (
             value,
             data: inputData,
             gasLimit,
-            gasPrice
+            gasPrice: `0x${gasPrice}`
           });
           const sub = await coincierge.transactions.finalize({txId, appId});
           sub.subscribe(ws => {
