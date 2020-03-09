@@ -7,6 +7,7 @@ const httpClient = httpAgent => resourceDetails => {
   return (...args) => {
     let body;
     let requestParams;
+    let headers;
 
     switch(method) {
       case 'GET':
@@ -21,13 +22,14 @@ const httpClient = httpAgent => resourceDetails => {
       // eslint-disable-next-line no-fallthrough
       case 'POST':
       default:
-        [body, requestParams] = args;
+        [body, requestParams, headers] = args;
     }
 
     return httpAgent(
       method,
       constructUrlFromParams(path, requestParams),
-      body
+      body,
+      headers
     );
   };
 };

@@ -27,7 +27,7 @@ const isTokenExpired = token => {
 let _accessToken;
 
 const getAccessToken = ({clientId, clientSecret}) => async () => {
-  if(_accessToken && !isTokenExpired(_accessToken)){
+  if(_accessToken && !isTokenExpired(_accessToken)) {
     return _accessToken;
   }
 
@@ -47,7 +47,6 @@ const getAccessToken = ({clientId, clientSecret}) => async () => {
     params
   );
 
-
   _accessToken = grant.access_token;
 
   return _accessToken;
@@ -60,22 +59,26 @@ const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
 
   const apiUrl = `https://${settings.host}${port}`;
 
-  return async (method, path, body) => {
+  return async (method, path, body, customHeaders) => {
     const accessToken = await getAccessToken({clientId, clientSecret})();
+
+    const defaultHeaders = customHeaders || {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
       'Idempotency-Key': method === 'POST' && settings.network_max_retry > 0
         ? `coincierge-node-retry-${uuid4()}`
-        : null
+        : null,
+      ...defaultHeaders
     };
 
     const request = fetch(
       apiUrl + path,
       method,
       reject(isNil)(headers),
-      JSON.stringify(body)
+      body
     );
 
     return requestHandler(request);
