@@ -1,3 +1,5 @@
+const {createFormData} = require('../utils/files');
+
 /* eslint-disable no-case-declarations */
 const createAppHandler = (
   wsClient,
@@ -60,6 +62,13 @@ const createAppHandler = (
   });
 });
 
+const uploadAppTemplate = (httpAgent, coincierge) => templatePath => {
+  const {organization: {id: orgId}} = coincierge;
+  const formData = createFormData(templatePath, ['.yml']);
+
+  return httpAgent(formData, {orgId}, formData.getHeaders());
+};
+
 const appResource = async ({
   httpAgent,
   wsAgent,
@@ -81,7 +90,12 @@ const appResource = async ({
     list: httpAgent({
       method: 'GET',
       path: basePath
-    })
+    }),
+
+    uploadTemplate: uploadAppTemplate(httpAgent({
+      method: 'POST',
+      path: `${basePath}/upload-template`
+    }), coincierge)
   };
 
   return {apps};
