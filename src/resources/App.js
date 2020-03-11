@@ -94,7 +94,7 @@ const appResource = async ({
 
     uploadTemplate: uploadAppTemplate(httpAgent({
       method: 'POST',
-      path: `${basePath}/upload`
+      path: `${basePath}/upload-template`
     }), coincierge)
   };
 
