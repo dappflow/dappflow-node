@@ -26,7 +26,6 @@ const sendTransaction = (httpAgent, {
   };
   const {result} = await httpAgent(body, {appId, contractId});
   const {
-    nonce,
     to,
     value,
     inputData,
@@ -34,6 +33,7 @@ const sendTransaction = (httpAgent, {
     gasPrice,
     id: txId
   } = result;
+  const nonce = await dappflow.transactions.nonce({appId, from});
   const signedTx = await signer({
     nonce,
     to,
