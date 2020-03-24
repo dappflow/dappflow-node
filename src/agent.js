@@ -64,7 +64,7 @@ const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
 
     const defaultHeaders = customHeaders || {
       Accept: 'application/json',
-      'Content-Type': 'application/json'
+      'content-type': 'application/json'
     };
     const headers = {
       Authorization: `Bearer ${accessToken}`,
@@ -74,11 +74,12 @@ const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
       ...defaultHeaders
     };
 
+    const safeBody = headers["content-type"] === 'application/json' ? JSON.stringify(body) : body;
     const request = fetch(
       apiUrl + path,
       method,
       reject(isNil)(headers),
-      body
+      safeBody
     );
 
     return requestHandler(request);

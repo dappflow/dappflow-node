@@ -78,20 +78,36 @@ const callContractMethod = (httpAgent, {
   return result;
 };
 
+const listContractTransactions = (httpAgent, contractId, appId) => () => {
+  return httpAgent({contractId, appId})
+}
+
 const getInstanceInstanceHandler = async (
   getInstance,
   coincierge,
   signer,
+  httpAgent,
   {appId, contractId}
 ) => {
   const contract = await getInstance({appId, contractId});
-
-  return await createMethodCalls({
+  const methodCalls = await createMethodCalls({
     contract,
     appId,
     coincierge,
     signer
   });
+
+  return {
+    ...methodCalls,
+    transactions: listContractTransactions(
+      httpAgent({
+        method: 'GET',
+        path: '/apps/{appId}/transactions'
+      }),
+      contractId,
+      appId
+    )
+  }
 };
 
 const contractResource = ({
@@ -119,7 +135,8 @@ const contractResource = ({
         path: `${basePath}/contracts/{contractId}`
       }),
       coincierge,
-      signer
+      signer,
+      httpAgent
     ),
     events: httpAgent({
       method: 'GET',

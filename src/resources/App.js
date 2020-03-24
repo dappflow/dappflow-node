@@ -69,6 +69,12 @@ const uploadAppTemplate = (httpAgent, coincierge) => templatePath => {
   return httpAgent(formData, {orgId}, formData.getHeaders());
 };
 
+const listApps = (httpAgent, coincierge) => () => {
+  const {organization: {id: orgId}} = coincierge;
+
+  return httpAgent({orgId});
+}
+
 const appResource = async ({
   httpAgent,
   wsAgent,
@@ -84,13 +90,16 @@ const appResource = async ({
 
     fetch: httpAgent({
       method: 'GET',
-      path: `${basePath}/{appId}`
+      path: '/apps/{appId}'
     }),
 
-    list: httpAgent({
-      method: 'GET',
-      path: basePath
-    }),
+    list: listApps(
+      httpAgent({
+        method: 'GET',
+        path: basePath
+      }),
+      coincierge
+    ),
 
     uploadTemplate: uploadAppTemplate(httpAgent({
       method: 'POST',
