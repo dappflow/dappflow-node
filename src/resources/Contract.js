@@ -7,7 +7,7 @@ const sendTransaction = (httpAgent, {
   appId,
   method,
   contractId,
-  coincierge,
+  dappflow,
   signer,
   methodInputs
 }) => async (params, from) => {
@@ -43,7 +43,7 @@ const sendTransaction = (httpAgent, {
     gasPrice
   });
 
-  const res = await coincierge.transactions.finalize({txId, appId});
+  const res = await dappflow.transactions.finalize({txId, appId});
   const transactionStatusEventEmitter = new EventEmitter();
   res.subscribe(ws => {
     const data = JSON.stringify({signedTx: signedTx.toString('hex')});
@@ -84,7 +84,7 @@ const listContractTransactions = (httpAgent, contractId, appId) => () => {
 
 const getInstanceInstanceHandler = async (
   getInstance,
-  coincierge,
+  dappflow,
   signer,
   httpAgent,
   {appId, contractId}
@@ -93,7 +93,7 @@ const getInstanceInstanceHandler = async (
   const methodCalls = await createMethodCalls({
     contract,
     appId,
-    coincierge,
+    dappflow,
     signer
   });
 
@@ -112,7 +112,7 @@ const getInstanceInstanceHandler = async (
 
 const contractResource = ({
   httpAgent,
-  coincierge,
+  dappflow,
   signer
 }) => {
   const basePath = '/apps/{appId}';
@@ -134,7 +134,7 @@ const contractResource = ({
         method: 'GET',
         path: `${basePath}/contracts/{contractId}`
       }),
-      coincierge,
+      dappflow,
       signer,
       httpAgent
     ),

@@ -4,10 +4,10 @@ const {createFormData} = require('../utils/files');
 const createAppHandler = (
   wsClient,
   token,
-  coincierge,
+  dappflow,
   signer
 ) => async ({...params}) => new Promise((res, rej) => {
-  const {organization: {id: orgId}} = coincierge;
+  const {organization: {id: orgId}} = dappflow;
 
   wsClient({orgId}).subscribe(async ws => {
     ws.send(JSON.stringify({token}));
@@ -36,7 +36,7 @@ const createAppHandler = (
             gasLimit,
             gasPrice
           });
-          const sub = await coincierge.transactions.finalize({txId, appId});
+          const sub = await dappflow.transactions.finalize({txId, appId});
           sub.subscribe(ws => {
             const data = JSON.stringify({signedTx: signedTx.toString('hex')});
 
@@ -62,15 +62,15 @@ const createAppHandler = (
   });
 });
 
-const uploadAppTemplate = (httpAgent, coincierge) => templatePath => {
-  const {organization: {id: orgId}} = coincierge;
+const uploadAppTemplate = (httpAgent, dappflow) => templatePath => {
+  const {organization: {id: orgId}} = dappflow;
   const formData = createFormData(templatePath, ['.yml']);
 
   return httpAgent(formData, {orgId}, formData.getHeaders());
 };
 
-const listApps = (httpAgent, coincierge) => () => {
-  const {organization: {id: orgId}} = coincierge;
+const listApps = (httpAgent, dappflow) => () => {
+  const {organization: {id: orgId}} = dappflow;
 
   return httpAgent({orgId});
 }
@@ -78,7 +78,7 @@ const listApps = (httpAgent, coincierge) => () => {
 const appResource = async ({
   httpAgent,
   wsAgent,
-  coincierge,
+  dappflow,
   signer,
   getAccessToken
 }) => {
@@ -86,7 +86,7 @@ const appResource = async ({
   const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, coincierge, signer),
+    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, dappflow, signer),
 
     fetch: httpAgent({
       method: 'GET',
@@ -98,13 +98,13 @@ const appResource = async ({
         method: 'GET',
         path: basePath
       }),
-      coincierge
+      dappflow
     ),
 
     uploadTemplate: uploadAppTemplate(httpAgent({
       method: 'POST',
       path: `${basePath}/upload-template`
-    }), coincierge)
+    }), dappflow)
   };
 
   return {apps};

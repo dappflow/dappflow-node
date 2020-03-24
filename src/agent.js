@@ -69,12 +69,12 @@ const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       'Idempotency-Key': method === 'POST' && settings.network_max_retry > 0
-        ? `coincierge-node-retry-${uuid4()}`
+        ? `dappflow-node-retry-${uuid4()}`
         : null,
       ...defaultHeaders
     };
 
-    const safeBody = headers["content-type"] === 'application/json' ? JSON.stringify(body) : body;
+    const safeBody = headers['Content-Type'] === 'application/json' ? JSON.stringify(body) : body;
     const request = fetch(
       apiUrl + path,
       method,

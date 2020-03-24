@@ -1,21 +1,21 @@
-const contractCallFactory = (state, coincierge) => {
+const contractCallFactory = (state, dappflow) => {
   switch(state) {
-    case 'view': return coincierge.contracts.callContractMethod;
-    default: return coincierge.contracts.sendTransaction;
+    case 'view': return dappflow.contracts.callContractMethod;
+    default: return dappflow.contracts.sendTransaction;
   }
 };
 
 const createMethodCalls = ({
   contract,
   appId,
-  coincierge,
+  dappflow,
   signer
 }) => {
   const methods = {};
   contract.abi
     .filter(({type}) => type === 'function')
     .forEach(method => {
-      const contractCall = contractCallFactory(method.stateMutability, coincierge);
+      const contractCall = contractCallFactory(method.stateMutability, dappflow);
 
       methods[method.name] = contractCall({
         appId,
@@ -24,7 +24,7 @@ const createMethodCalls = ({
         contractAddress: contract.address,
         methodInputs: method.inputs,
         contractId: contract.id,
-        coincierge,
+        dappflow,
         signer
       });
     });
