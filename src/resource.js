@@ -56,7 +56,7 @@ const createResourcesRoot = resourcesList => async ({
       const resource = await resourceBuilder({
         httpAgent: httpClient(httpAgent),
         wsAgent: wsClient(wsAgent),
-        coincierge: builtResources,
+        dappflow: builtResources,
         signer,
         getAccessToken
       });

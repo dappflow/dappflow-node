@@ -1,15 +1,15 @@
 {
-  "name": "coincierge-node",
+  "name": "dappflow-node",
   "version": "1.0.0",
-  "description": "Coincierge node.js SDK",
-  "main": "src/coincierge.js",
+  "description": "Dappflow node.js SDK",
+  "main": "src/dappflow.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/valerioleo/coincierge-node"
+    "url": "https://github.com/dappflow/dappflow-node"
   },
-  "author": "Valerio Leo <mail.valerioleo@gmail.com>",
+  "author": "Dappflow <info@dappflow.io>",
   "private": true,
-  "homepage": "https://coincierge.io",
+  "homepage": "https://dappflow.io",
   "scripts": {
     "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only"
   },

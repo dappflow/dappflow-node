@@ -18,12 +18,12 @@ const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKe
     getAccessToken: getAccessToken({clientSecret, clientId})
   });
 
-  const coincierge = {
+  const dappflow = {
     ...resources,
     settings: SETTINGS // helpful to retrieve the current settings used
   };
 
-  return coincierge;
+  return dappflow;
 };
 
 module.exports = {
