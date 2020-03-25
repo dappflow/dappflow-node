@@ -10,11 +10,6 @@ const transactionResource = ({wsAgent, httpAgent}) => {
     list: httpAgent({
       method: 'GET',
       path: '/apps/{appId}/transactions'
-    }),
-
-    nonce: httpAgent({
-      method: 'GET',
-      path: `/apps/{appId}/transactions/blockchain/nonce?from={from}`
     })
   };
 
