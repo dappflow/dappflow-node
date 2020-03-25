@@ -6,7 +6,7 @@ const createAppHandler = (
   token,
   dappflow,
   signer
-) => async ({...params}) => new Promise((res, rej) => {
+) => async (params, from) => new Promise((res, rej) => {
   const {organization: {id: orgId}} = dappflow;
 
   wsClient({orgId}).subscribe(async ws => {
@@ -18,7 +18,6 @@ const createAppHandler = (
       switch(type) {
         case 'signable_tx':
           const {
-            nonce,
             to,
             value,
             inputData,
@@ -27,7 +26,7 @@ const createAppHandler = (
             id: txId,
             appId
           } = data;
-
+          const nonce = await dappflow.blockchain.nonce({address: from});
           const signedTx = await signer({
             nonce,
             to,
