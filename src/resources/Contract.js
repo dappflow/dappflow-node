@@ -79,7 +79,11 @@ const callContractMethod = (httpAgent, {
 };
 
 const listContractTransactions = (httpAgent, contractId, appId) => () => {
-  return httpAgent({contractId, appId})
+  return httpAgent({contractId, appId});
+}
+
+const listContractEvents = (httpAgent, contractId, appId) => filters => {
+  return httpAgent({...filters, contractId, appId});
 }
 
 const getInstanceInstanceHandler = async (
@@ -103,6 +107,14 @@ const getInstanceInstanceHandler = async (
       httpAgent({
         method: 'GET',
         path: '/apps/{appId}/transactions'
+      }),
+      contractId,
+      appId
+    ),
+    events: listContractEvents(
+      httpAgent({
+        method: 'GET',
+        path: '/apps/{appId}/events'
       }),
       contractId,
       appId
