@@ -74,7 +74,7 @@ const createHttpAgentRoot = fetch => ({clientId, clientSecret}, settings) => {
       ...defaultHeaders
     };
 
-    const safeBody = headers['Content-Type'].includes('application/json') ? JSON.stringify(body) : body;
+    const safeBody = headers['Content-Type'] && headers['Content-Type'].includes('application/json') ? JSON.stringify(body) : body;
     const request = fetch(
       apiUrl + path,
       method,
