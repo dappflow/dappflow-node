@@ -3,9 +3,7 @@ const {createResources} = require('./resource');
 const {signer: sdkSigner} = require('./signer');
 
 const SETTINGS = {
-  host: 'localhost',
-  httpPort: '8445',
-  wsPort: '8445'
+  host: 'api.dappflow.io'
 };
 
 const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKey)) => {
