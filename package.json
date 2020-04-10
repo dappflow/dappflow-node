@@ -8,7 +8,6 @@
     "url": "https://github.com/dappflow/dappflow-node"
   },
   "author": "Dappflow <info@dappflow.io>",
-  "private": true,
   "homepage": "https://dappflow.io",
   "scripts": {
     "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only"
