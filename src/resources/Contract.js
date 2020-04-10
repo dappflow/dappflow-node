@@ -33,7 +33,7 @@ const sendTransaction = (httpAgent, {
     gasPrice,
     id: txId
   } = result;
-  const nonce = await dappflow.blockchain.nonce({address: from});
+  const {nonce} = await dappflow.blockchain.nonce({address: from});
   const signedTx = await signer({
     nonce,
     to,
