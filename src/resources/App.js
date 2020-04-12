@@ -1,4 +1,5 @@
 const {createFormData} = require('../utils/files');
+const EventEmitter = require('events');
 
 /* eslint-disable no-case-declarations */
 const createAppHandler = (
@@ -6,7 +7,8 @@ const createAppHandler = (
   token,
   dappflow,
   signer
-) => async (params, from) => new Promise((res, rej) => {
+) => async (params, from) => {
+  const appStatusEventEmitter = new EventEmitter();
   const {organization: {id: orgId}} = dappflow;
 
   wsClient({orgId}).subscribe(async ws => {
@@ -26,6 +28,8 @@ const createAppHandler = (
             id: txId,
             appId
           } = data;
+          appStatusEventEmitter.emit(type, {txId});
+
           const {nonce} = await dappflow.blockchain.nonce({address: from});
           const signedTx = await signer({
             nonce,
@@ -44,7 +48,7 @@ const createAppHandler = (
 
           break;
         case 'complete':
-          res(data);
+          appStatusEventEmitter.emit(type, data);
           ws.close();
 
           break;
@@ -53,13 +57,18 @@ const createAppHandler = (
 
           break;
         default:
+          appStatusEventEmitter.emit(type, data);
 
           break;
       }
     });
-    ws.on('error', rej);
+    ws.on('error', error => {
+      appStatusEventEmitter.emit('error', error);
+    });
   });
-});
+  
+  return appStatusEventEmitter;
+};
 
 const uploadAppTemplate = (httpAgent, dappflow) => templatePath => {
   const {organization: {id: orgId}} = dappflow;
