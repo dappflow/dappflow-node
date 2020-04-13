@@ -40,7 +40,7 @@ const createAppHandler = (
             gasPrice
           });
           const sub = await dappflow.transactions.finalize({txId, appId});
-          
+
           sub.subscribe(ws => {
             const data = JSON.stringify({signedTx: signedTx.toString('hex')});
 
@@ -48,9 +48,7 @@ const createAppHandler = (
             ws.on('message', async message => {
               const {type, ...data} = JSON.parse(message);
 
-              if(type === 'txHash'){
-                transactionStatusEventEmitter.emit(type, data);
-              }
+              appStatusEventEmitter.emit(type, data);
             });
           });
 
