@@ -48,7 +48,7 @@ const createAppHandler = (
             ws.on('message', async message => {
               const {type, ...data} = JSON.parse(message);
 
-              appStatusEventEmitter.emit(type, data);
+              appStatusEventEmitter.emit(type, {...data, txId});
             });
           });
 
