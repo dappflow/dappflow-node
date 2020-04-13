@@ -28,7 +28,7 @@ const createAppHandler = (
             id: txId,
             appId
           } = data;
-          appStatusEventEmitter.emit(type, {txId});
+          appStatusEventEmitter.emit(type, data);
 
           const {nonce} = await dappflow.blockchain.nonce({address: from});
           const signedTx = await signer({
@@ -40,10 +40,18 @@ const createAppHandler = (
             gasPrice
           });
           const sub = await dappflow.transactions.finalize({txId, appId});
+          
           sub.subscribe(ws => {
             const data = JSON.stringify({signedTx: signedTx.toString('hex')});
 
             ws.send(data);
+            ws.on('message', async message => {
+              const {type, ...data} = JSON.parse(message);
+
+              if(type === 'txHash'){
+                transactionStatusEventEmitter.emit(type, data);
+              }
+            });
           });
 
           break;
