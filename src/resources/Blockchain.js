@@ -2,7 +2,7 @@ const blockchainResource = ({httpAgent}) => {
   const blockchain = {
     nonce: httpAgent({
       method: 'GET',
-      path: `/blockchain/addresses/{address}/nonce`
+      path: `/blockchain/addresses/{address}/nonce?network={network}`
     })
   };
 
