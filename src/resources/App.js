@@ -7,9 +7,10 @@ const createAppHandler = (
   token,
   dappflow,
   signer
-) => async (params, from) => {
+) => async (params, options) => {
   const appStatusEventEmitter = new EventEmitter();
   const {organization: {id: orgId}} = dappflow;
+  const {from, network} = options;
 
   wsClient({orgId}).subscribe(async ws => {
     ws.send(JSON.stringify({token}));
@@ -30,7 +31,7 @@ const createAppHandler = (
           } = data;
           appStatusEventEmitter.emit(type, data);
 
-          const {nonce} = await dappflow.blockchain.nonce({address: from});
+          const {nonce} = await dappflow.blockchain.nonce({address: from, network});
           const signedTx = await signer({
             nonce,
             to,
@@ -59,7 +60,7 @@ const createAppHandler = (
 
           break;
         case 'authorize':
-          ws.send(JSON.stringify(params));
+          ws.send(JSON.stringify({...params, network}));
 
           break;
         default:
@@ -80,6 +81,7 @@ const uploadAppTemplate = (httpAgent, dappflow) => templatePath => {
   const {organization: {id: orgId}} = dappflow;
   const formData = createFormData(templatePath, ['.yml']);
 
+  console.log("formData.getHeaders()", formData.getHeaders())
   return httpAgent(formData, {orgId}, formData.getHeaders());
 };
 
