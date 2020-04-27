@@ -1,6 +1,6 @@
 {
   "name": "dappflow-node",
-  "version": "1.0.3",
+  "version": "0.1.1",
   "description": "Dappflow node.js SDK",
   "main": "src/dappflow.js",
   "repository": {
@@ -37,7 +37,7 @@
     "web3-utils": "^1.2.6",
     "ws": "^7.2.1"
   },
-   "husky": {
+  "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
