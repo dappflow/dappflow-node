@@ -1,0 +1,67 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "root": true,
+    "extends": ["eslint:recommended", "airbnb-base", "plugin:react/recommended"],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        },
+        "sourceType": "module"
+    },
+    "rules": {
+        "import/no-extraneous-dependencies": ["error", {
+            "packageDir": ""
+            }
+        ],
+        "indent": ["error", 2, {
+                "SwitchCase": 1
+            }
+        ],
+        "keyword-spacing": ["error", { 
+            "overrides": {
+                "if": { "after": false },
+                "for": { "after": false },
+                "while": { "after": false },
+                "catch": { "after": false },
+                "switch": { "after": false }
+            }
+        }],
+        "array-bracket-spacing": ["error", "never"],
+        "brace-style": ["error", "stroustrup"],
+        "object-curly-spacing": ["error", "never"],
+        "no-unused-vars": ["error", {
+            "argsIgnorePattern": "_",
+            "varsIgnorePattern": "^_*_$"
+        }],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "comma-dangle": ["error", "never"],
+        "arrow-parens": ["error", "as-needed"],
+        "global-require": [0],
+        "class-methods-use-this": [0],
+        "no-plusplus": [0],
+        "no-confusing-arrow": [0],
+        "func-names": [0],
+        "no-return-await": [0],
+        "no-multiple-empty-lines": ["error", {"max": 1}],
+        "no-param-reassign": ["error", { 
+                "props": true,
+                "ignorePropertyModificationsFor": ["ctx", "t"] 
+            }
+        ]
+    },
+    "overrides": [
+    {
+      "files": ["*-test.js","*.integration.js", "*Actions.js"],
+      "rules": {
+        "no-shadow": "off"
+      }
+    }
+  ]
+}
