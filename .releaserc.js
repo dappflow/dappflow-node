@@ -1,5 +1,5 @@
 module.exports = {
-  branches: ['fix-web3-changes'],
+  branches: ['master'],
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
