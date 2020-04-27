@@ -41,7 +41,7 @@ const getAccessToken = ({clientId, clientSecret}) => async () => {
   };
 
   const grant = await fetch(
-    'https://auth.dappflow.io/auth/realms/dappflow/protocol/openid-connect/token',
+    'https://auth.dappflow.com/auth/realms/dappflow/protocol/openid-connect/token',
     'POST',
     headers,
     params

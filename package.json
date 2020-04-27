@@ -1,6 +1,6 @@
 {
   "name": "dappflow-node",
-  "version": "1.0.3",
+  "version": "1.0.7",
   "description": "Dappflow node.js SDK",
   "main": "src/dappflow.js",
   "repository": {
@@ -10,14 +10,19 @@
   "author": "Dappflow <info@dappflow.io>",
   "homepage": "https://dappflow.io",
   "scripts": {
-    "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only"
+    "integration": "node_modules/.bin/ava src/**/**.integration.js --serial --only",
+    "lint": "eslint"
   },
   "devDependencies": {
     "ava": "^2.4.0",
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-chai-friendly": "^0.4.0",
-    "eslint-plugin-prettier": "^3.0.1"
+    "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.1.7"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.0",
@@ -31,5 +36,17 @@
     "uuid": "^3.3.3",
     "web3-utils": "^1.2.6",
     "ws": "^7.2.1"
-  }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./**/*.{js,jsx}": [
+      "yarn lint"
+    ]
+  },
+  "license": "MITs"
 }

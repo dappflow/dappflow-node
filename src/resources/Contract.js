@@ -9,8 +9,11 @@ const sendTransaction = (httpAgent, {
   contractId,
   dappflow,
   signer,
-  methodInputs
-}) => async (params, from) => {
+  methodInputs,
+  network
+}) => async (params, options) => {
+  const {from} = options;
+
   if(!from) {
     throw new Error(`No 'from' address specified in method call ${method}`);
   }
@@ -33,7 +36,8 @@ const sendTransaction = (httpAgent, {
     gasPrice,
     id: txId
   } = result;
-  const {nonce} = await dappflow.blockchain.nonce({address: from});
+  const {nonce} = await dappflow.blockchain.nonce({address: from, network});
+
   const signedTx = await signer({
     nonce,
     to,
@@ -103,6 +107,7 @@ const getInstanceInstanceHandler = async (
 
   return {
     ...methodCalls,
+    network: contract.chainId,
     transactions: listContractTransactions(
       httpAgent({
         method: 'GET',
