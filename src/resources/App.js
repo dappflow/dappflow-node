@@ -81,7 +81,6 @@ const uploadAppTemplate = (httpAgent, dappflow) => templatePath => {
   const {organization: {id: orgId}} = dappflow;
   const formData = createFormData(templatePath, ['.yml']);
 
-  console.log("formData.getHeaders()", formData.getHeaders())
   return httpAgent(formData, {orgId}, formData.getHeaders());
 };
 

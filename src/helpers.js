@@ -25,7 +25,8 @@ const createMethodCalls = ({
         methodInputs: method.inputs,
         contractId: contract.id,
         dappflow,
-        signer
+        signer,
+        network: contract.chainId
       });
     });
 
