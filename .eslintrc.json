@@ -7,7 +7,7 @@
         "node": true
     },
     "root": true,
-    "extends": ["eslint:recommended", "airbnb-base", "plugin:react/recommended"],
+    "extends": ["eslint:recommended", "airbnb-base"],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true
