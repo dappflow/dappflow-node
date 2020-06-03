@@ -95,6 +95,7 @@ const getInstanceInstanceHandler = async (
   dappflow,
   signer,
   httpAgent,
+  basePath,
   {appId, contractId}
 ) => {
   const contract = await getInstance({appId, contractId});
@@ -111,7 +112,7 @@ const getInstanceInstanceHandler = async (
     transactions: listContractTransactions(
       httpAgent({
         method: 'GET',
-        path: '/apps/{appId}/transactions'
+        path: `${basePath}/transactions`
       }),
       contractId,
       appId
@@ -119,7 +120,7 @@ const getInstanceInstanceHandler = async (
     events: listContractEvents(
       httpAgent({
         method: 'GET',
-        path: '/apps/{appId}/events'
+        path: `${basePath}/events`
       }),
       contractId,
       appId
@@ -132,7 +133,8 @@ const contractResource = ({
   dappflow,
   signer
 }) => {
-  const basePath = '/apps/{appId}';
+  const {organization: {id: orgId}} = dappflow;
+  const basePath = `/organisations/${orgId}/apps/{appId}`;
   const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/contracts/{contractId}/rpc`
@@ -153,7 +155,8 @@ const contractResource = ({
       }),
       dappflow,
       signer,
-      httpAgent
+      httpAgent,
+      basePath
     ),
     events: httpAgent({
       method: 'GET',
