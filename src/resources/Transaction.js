@@ -1,6 +1,6 @@
 const transactionResource = ({wsAgent, httpAgent, dappflow}) => {
   const {organization: {id: orgId}} = dappflow;
-  const basePath = `/organisations/${orgId}/apps/{appId}`;
+  const basePath = `/orgs/${orgId}/apps/{appId}`;
 
   const transactions = {
     finalize: wsAgent({

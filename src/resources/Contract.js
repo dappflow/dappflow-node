@@ -134,7 +134,7 @@ const contractResource = ({
   signer
 }) => {
   const {organization: {id: orgId}} = dappflow;
-  const basePath = `/organisations/${orgId}/apps/{appId}`;
+  const basePath = `/orgs/${orgId}/apps/{appId}`;
   const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/contracts/{contractId}/rpc`

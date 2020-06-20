@@ -97,7 +97,7 @@ const appResource = async ({
   signer,
   getAccessToken
 }) => {
-  const basePath = '/organisations/{orgId}/apps';
+  const basePath = '/orgs/{orgId}/apps';
   const token = await getAccessToken();
 
   const apps = {

@@ -1,5 +1,5 @@
 const contractResource = ({httpAgent}) => {
-  const basePath = '/organisations/{orgId}/apps/{appId}';
+  const basePath = '/orgs/{orgId}/apps/{appId}';
 
   const events = {
     list: httpAgent({
