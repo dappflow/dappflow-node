@@ -1,6 +1,6 @@
 {
   "name": "dappflow-node",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Dappflow node.js SDK",
   "main": "src/dappflow.js",
   "repository": {
