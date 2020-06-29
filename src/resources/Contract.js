@@ -47,15 +47,15 @@ const sendTransaction = (httpAgent, {
     gasPrice
   });
 
-  const res = await dappflow.transactions.finalize({txId, appId});
+  const res = await dappflow.transactions.finalize({appId});
   const transactionStatusEventEmitter = new EventEmitter();
   res.subscribe(ws => {
-    const data = JSON.stringify({signedTx: signedTx.toString('hex')});
+    const data = JSON.stringify({signedTx: signedTx.toString('hex'), txId});
 
     ws.send(data);
     ws.on('message', async message => {
-      const {type, ...data} = JSON.parse(message);
-      transactionStatusEventEmitter.emit(type, data);
+      const {type, ...rest} = JSON.parse(message);
+      transactionStatusEventEmitter.emit(type, rest);
     });
   });
 
@@ -82,13 +82,17 @@ const callContractMethod = (httpAgent, {
   return result;
 };
 
-const listContractTransactions = (httpAgent, contractId, appId) => () => {
-  return httpAgent({contractId, appId});
-}
+const listContractTransactions = (
+  httpAgent,
+  contractId,
+  appId
+) => () => httpAgent({contractId, appId});
 
-const listContractEvents = (httpAgent, contractId, appId) => filters => {
-  return httpAgent({...filters, contractId, appId});
-}
+const listContractEvents = (
+  httpAgent,
+  contractId,
+  appId
+) => filters => httpAgent({...filters, contractId, appId});
 
 const getInstanceInstanceHandler = async (
   getInstance,
@@ -125,7 +129,7 @@ const getInstanceInstanceHandler = async (
       contractId,
       appId
     )
-  }
+  };
 };
 
 const contractResource = ({
