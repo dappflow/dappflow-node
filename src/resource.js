@@ -45,6 +45,7 @@ const wsClient = wsAgent => resourceDetails => requestParams => {
 const createResourcesRoot = resourcesList => async ({
   httpAgent,
   wsAgent,
+  wsServerAgent,
   signer,
   getAccessToken
 }) => {
@@ -56,6 +57,7 @@ const createResourcesRoot = resourcesList => async ({
       const resource = await resourceBuilder({
         httpAgent: httpClient(httpAgent),
         wsAgent: wsClient(wsAgent),
+        wsServerAgent: wsClient(wsServerAgent),
         dappflow: builtResources,
         signer,
         getAccessToken
