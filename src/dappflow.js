@@ -6,12 +6,18 @@ const SETTINGS = {
   host: 'api.dappflow.com'
 };
 
+const SETTINGS_WS = {
+  host: 'ws.dappflow.com'
+};
+
 const init = async ({clientSecret, clientId, privKey}, signer = sdkSigner(privKey)) => {
   const httpAgent = createHttpAgent({clientSecret, clientId}, SETTINGS);
   const wsAgent = createWsAgent({clientSecret, clientId}, SETTINGS);
+  const wsServerAgent = createWsAgent({clientSecret, clientId}, SETTINGS_WS);
   const resources = await createResources({
     httpAgent,
     wsAgent,
+    wsServerAgent,
     signer,
     getAccessToken: getAccessToken({clientSecret, clientId})
   });
