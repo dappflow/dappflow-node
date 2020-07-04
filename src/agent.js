@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-underscore-dangle */
 const WebSocket = require('ws');
 const {reject, isNil} = require('rambda');
 const {URLSearchParams} = require('url');
@@ -41,7 +43,7 @@ const getAccessToken = ({clientId, clientSecret}) => async () => {
   };
 
   const grant = await fetch(
-    'https://auth.dappflow.com/auth/realms/dappflow/protocol/openid-connect/token',
+    'https://oidc.dappflow.com/auth/realms/dappflow/protocol/openid-connect/token',
     'POST',
     headers,
     params

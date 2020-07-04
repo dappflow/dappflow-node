@@ -7,7 +7,6 @@ const signer = privKey => {
     if(!privKey || typeof privKey !== 'string') {
       throw Error('To use the default signer you must pass a valid privKey string. Both hex or mnemonic versions are accepted.');
     }
-
     const wallet = isMnemonin(privKey)
       ? ethers.Wallet.fromMnemonic(privKey)
       : new ethers.Wallet(privKey);

@@ -1,22 +1,44 @@
-const {createFormData} = require('../utils/files');
 const EventEmitter = require('events');
+const {createFormData} = require('../utils/files');
+const {parseYaml, toYaml} = require('../utils/yaml');
+
+const TEMPLATE_DEPLOYMENT_MESSAGES = {
+  START_DEPLOYMENT: 'start_deployment',
+  TX_TRANSMITTED: 'tx_transmitted',
+  TX_REJECTED: 'tx_rejected',
+  TRANSMIT_TX: 'transmit_tx'
+};
+
+const merge = (target, source) => {
+  for(const key of Object.keys(source)) {
+    if(source[key] instanceof Object) Object.assign(source[key], merge(target[key], source[key]));
+  }
+
+  Object.assign(target || {}, source);
+  return target;
+};
 
 /* eslint-disable no-case-declarations */
 const createAppHandler = (
   wsClient,
+  httpClient,
   token,
   dappflow,
   signer
-) => async (params, options) => {
+) => async params => {
   const appStatusEventEmitter = new EventEmitter();
   const {organization: {id: orgId}} = dappflow;
-  const {from, network} = options;
+  const {template: templateName, ...templateParams} = params;
+  const {template} = await httpClient({orgId, template: templateName});
+  const {from} = templateParams.spec.contracts[0];
+  const network = 42;
+  const mergedTemplate = merge(parseYaml(template), templateParams);
 
-  wsClient({orgId}).subscribe(async ws => {
+  wsClient().subscribe(async ws => {
     ws.send(JSON.stringify({token}));
 
     ws.on('message', async message => {
-      const {type, data} = JSON.parse(message);
+      const {type, data, appId} = JSON.parse(message);
 
       switch(type) {
         case 'signable_tx':
@@ -27,7 +49,7 @@ const createAppHandler = (
             gasLimit,
             gasPrice,
             id: txId,
-            appId
+            sessionId
           } = data;
           appStatusEventEmitter.emit(type, data);
 
@@ -40,27 +62,30 @@ const createAppHandler = (
             gasLimit,
             gasPrice
           });
-          const sub = await dappflow.transactions.finalize({txId, appId});
+          const body = {
+            signedTx,
+            txId,
+            sessionId,
+            chainId: network
+          };
 
-          sub.subscribe(ws => {
-            const data = JSON.stringify({signedTx: signedTx.toString('hex')});
-
-            ws.send(data);
-            ws.on('message', async message => {
-              const {type, ...data} = JSON.parse(message);
-
-              appStatusEventEmitter.emit(type, {...data, txId});
-            });
-          });
+          ws.send(JSON.stringify({
+            ...body,
+            type: TEMPLATE_DEPLOYMENT_MESSAGES.TRANSMIT_TX
+          }));
 
           break;
         case 'complete':
-          appStatusEventEmitter.emit(type, data);
+          appStatusEventEmitter.emit(type, {appId});
           ws.close();
 
           break;
         case 'authorize':
-          ws.send(JSON.stringify({...params, network}));
+          ws.send(JSON.stringify({
+            orgId,
+            template: toYaml(mergedTemplate),
+            type: TEMPLATE_DEPLOYMENT_MESSAGES.START_DEPLOYMENT
+          }));
 
           break;
         default:
@@ -73,7 +98,7 @@ const createAppHandler = (
       appStatusEventEmitter.emit('error', error);
     });
   });
-  
+
   return appStatusEventEmitter;
 };
 
@@ -88,11 +113,11 @@ const listApps = (httpAgent, dappflow) => () => {
   const {organization: {id: orgId}} = dappflow;
 
   return httpAgent({orgId});
-}
+};
 
 const appResource = async ({
   httpAgent,
-  wsAgent,
+  wsServerAgent,
   dappflow,
   signer,
   getAccessToken
@@ -101,7 +126,13 @@ const appResource = async ({
   const token = await getAccessToken();
 
   const apps = {
-    create: createAppHandler(wsAgent({path: `${basePath}/create-app`}), token, dappflow, signer),
+    create: createAppHandler(
+      wsServerAgent({path: '/apps'}),
+      httpAgent({path: '/apps/template/{template}', method: 'GET'}),
+      token,
+      dappflow,
+      signer
+    ),
 
     fetch: httpAgent({
       method: 'GET',

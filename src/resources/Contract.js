@@ -47,15 +47,15 @@ const sendTransaction = (httpAgent, {
     gasPrice
   });
 
-  const res = await dappflow.transactions.finalize({txId, appId});
+  const res = await dappflow.transactions.finalize({appId});
   const transactionStatusEventEmitter = new EventEmitter();
   res.subscribe(ws => {
-    const data = JSON.stringify({signedTx: signedTx.toString('hex')});
+    const data = JSON.stringify({signedTx: signedTx.toString('hex'), txId});
 
     ws.send(data);
     ws.on('message', async message => {
-      const {type, ...data} = JSON.parse(message);
-      transactionStatusEventEmitter.emit(type, data);
+      const {type, ...rest} = JSON.parse(message);
+      transactionStatusEventEmitter.emit(type, rest);
     });
   });
 
@@ -82,19 +82,24 @@ const callContractMethod = (httpAgent, {
   return result;
 };
 
-const listContractTransactions = (httpAgent, contractId, appId) => () => {
-  return httpAgent({contractId, appId});
-}
+const listContractTransactions = (
+  httpAgent,
+  contractId,
+  appId
+) => () => httpAgent({contractId, appId});
 
-const listContractEvents = (httpAgent, contractId, appId) => filters => {
-  return httpAgent({...filters, contractId, appId});
-}
+const listContractEvents = (
+  httpAgent,
+  contractId,
+  appId
+) => filters => httpAgent({...filters, contractId, appId});
 
 const getInstanceInstanceHandler = async (
   getInstance,
   dappflow,
   signer,
   httpAgent,
+  basePath,
   {appId, contractId}
 ) => {
   const contract = await getInstance({appId, contractId});
@@ -111,7 +116,7 @@ const getInstanceInstanceHandler = async (
     transactions: listContractTransactions(
       httpAgent({
         method: 'GET',
-        path: '/apps/{appId}/transactions'
+        path: `${basePath}/transactions`
       }),
       contractId,
       appId
@@ -119,12 +124,12 @@ const getInstanceInstanceHandler = async (
     events: listContractEvents(
       httpAgent({
         method: 'GET',
-        path: '/apps/{appId}/events'
+        path: `${basePath}/events`
       }),
       contractId,
       appId
     )
-  }
+  };
 };
 
 const contractResource = ({
@@ -132,7 +137,8 @@ const contractResource = ({
   dappflow,
   signer
 }) => {
-  const basePath = '/apps/{appId}';
+  const {organization: {id: orgId}} = dappflow;
+  const basePath = `/orgs/${orgId}/apps/{appId}`;
   const rpcCall = httpAgent({
     method: 'POST',
     path: `${basePath}/contracts/{contractId}/rpc`
@@ -153,7 +159,8 @@ const contractResource = ({
       }),
       dappflow,
       signer,
-      httpAgent
+      httpAgent,
+      basePath
     ),
     events: httpAgent({
       method: 'GET',
